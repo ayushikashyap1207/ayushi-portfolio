@@ -1,526 +1,994 @@
 import { useEffect, useRef, useState } from "react";
-import { Github, Linkedin, Mail, Phone, ExternalLink, Menu, X, Award, GraduationCap, ArrowRight } from "lucide-react";
+import {
+  Activity,
+  ArrowDown,
+  ArrowUpRight,
+  Award,
+  BookOpen,
+  CalendarDays,
+  Check,
+  Copy,
+  FileText,
+  Github,
+  GraduationCap,
+  Linkedin,
+  Mail,
+  MapPin,
+  Menu,
+  Phone,
+  Presentation,
+  Scale,
+  ScanLine,
+  ShieldAlert,
+  Sparkles,
+  Sprout,
+  Store,
+  X,
+} from "lucide-react";
+import {
+  CERTS,
+  EDUCATION,
+  FACTS,
+  NAV,
+  PROFILE,
+  PROJECTS,
+  SKILL_GROUPS,
+  STATS,
+  TECH,
+} from "./data";
+import { TechIcon, techBrand, techIconBackground } from "./techIcons";
 
-const GITHUB_URL = "https://tinyurl.com/githpro";
-const LINKEDIN_URL = "https://tinyurl.com/prolikin";
-const EMAIL = "toayushikashyap@gmail.com";
-const PHONE_DISPLAY = "+91 7858849788";
-const PHONE_TEL = "+917858849788";
+const GLYPHS = {
+  sparkles: Sparkles,
+  presentation: Presentation,
+  scale: Scale,
+  shield: ShieldAlert,
+  activity: Activity,
+  scan: ScanLine,
+  file: FileText,
+  sprout: Sprout,
+  book: BookOpen,
+  calendar: CalendarDays,
+  store: Store,
+};
+
+const TICKER = [
+  "Python",
+  "PyTorch",
+  "FastAPI",
+  "LangChain",
+  "React",
+  "Docker",
+  "PostgreSQL",
+  "OpenCV",
+  "RAG",
+  "TypeScript",
+];
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
 
 function useReveal() {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(prefersReducedMotion);
+
   useEffect(() => {
+    if (visible) return;
+
+    if (prefersReducedMotion()) {
+      setVisible(true);
+      return;
+    }
+
     const el = ref.current;
     if (!el) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setVisible(true);
+      return;
+    }
+
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setVisible(true)),
-      { threshold: 0.12 }
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setVisible(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -48px 0px" }
     );
+
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [visible]);
+
   return [ref, visible];
 }
 
-function Reveal({ children, className = "", style = {} }) {
+function Reveal({
+  children,
+  className = "",
+  delay = "0s",
+  as: Tag = "div",
+  ...rest
+}) {
   const [ref, visible] = useReveal();
+
   return (
-    <div
+    <Tag
       ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(18px)",
-        transition: "opacity .6s ease, transform .6s ease",
-        ...style,
-      }}
+      className={`reveal ${visible ? "is-visible" : ""} ${className}`.trim()}
+      style={{ "--delay": delay }}
+      {...rest}
     >
       {children}
+    </Tag>
+  );
+}
+
+function FlowerMark({ className = "" }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 64 64"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {Array.from({ length: 8 }).map((_, index) => (
+        <ellipse
+          key={index}
+          cx="32"
+          cy="18.5"
+          rx="6.2"
+          ry="13"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          transform={`rotate(${index * 45} 32 32)`}
+        />
+      ))}
+      <circle cx="32" cy="32" r="3.6" fill="currentColor" />
+    </svg>
+  );
+}
+
+function useActiveSection() {
+  const [active, setActive] = useState("");
+
+  useEffect(() => {
+    const sections = NAV.map((item) =>
+      document.getElementById(item.id)
+    ).filter(Boolean);
+
+    if (!sections.length || !("IntersectionObserver" in window)) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-32% 0px -55% 0px", threshold: [0, 0.2, 0.6] }
+    );
+
+    sections.forEach((section) => io.observe(section));
+    return () => io.disconnect();
+  }, []);
+
+  return active;
+}
+
+function SectionHead({ index, label, title, intro }) {
+  return (
+    <div className="section-head">
+      <div className="section-kicker mono">
+        <span className="kicker-index">{index}</span>
+        <span>{label}</span>
+      </div>
+      <h2 className="section-title">{title}</h2>
+      {intro ? <p className="section-intro">{intro}</p> : null}
     </div>
   );
 }
 
-function Tag({ children }) {
-  return <span className="tag">{children}</span>;
-}
-function StackTag({ children }) {
-  return <span className="stack-tag mono">{children}</span>;
-}
-function Metric({ children, amber = false }) {
-  return <span className={"metric mono" + (amber ? " amber" : "")}>{children}</span>;
+function TechChip({ id }) {
+  const tech = TECH[id];
+  if (!tech) return null;
+
+  return (
+    <span className="chip">
+      {tech.mono ? null : <TechIcon id={id} />}
+      {tech.label}
+    </span>
+  );
 }
 
-function TStat({ num, label, delay }) {
+function SocialLinks() {
   return (
-    <div className="tstat">
-      <div className="scan" style={{ animationDelay: delay }} />
-      <div className="num mono">{num}</div>
-      <div className="label">{label}</div>
+    <div className="socials" aria-label="Social links">
+      <a
+        href={PROFILE.github}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="GitHub profile"
+      >
+        <Github size={17} />
+      </a>
+      <a
+        href={PROFILE.linkedin}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="LinkedIn profile"
+      >
+        <Linkedin size={17} />
+      </a>
+      <a href={`mailto:${PROFILE.email}`} aria-label="Email Ayushi">
+        <Mail size={17} />
+      </a>
     </div>
   );
 }
 
-function Project({ date, title, url, stack, bullets, metrics }) {
+function CopyEmail() {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 2200);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(PROFILE.email);
+      setCopied(true);
+    } catch {
+      window.location.href = `mailto:${PROFILE.email}`;
+    }
+  }
+
   return (
-    <div className="project">
-      <div className="project-top">
-        <div>
-          <div className="project-date mono">{date}</div>
-          <div className="project-title">
-            {title}
-            <a href={url} target="_blank" rel="noreferrer" aria-label="Open project">
-              <ExternalLink size={16} />
-            </a>
-          </div>
+    <button className="btn btn-ghost copy-btn" type="button" onClick={copy}>
+      {copied ? (
+        <Check size={16} aria-hidden="true" />
+      ) : (
+        <Copy size={16} aria-hidden="true" />
+      )}
+      <span aria-live="polite">{copied ? "Copied" : "Copy email"}</span>
+    </button>
+  );
+}
+
+function FeaturedProject({ project, delay }) {
+  const Glyph = GLYPHS[project.glyph] ?? Sparkles;
+
+  return (
+    <Reveal as="article" className="work-item" delay={delay}>
+      <div className="work-index" aria-hidden="true">
+        <span className="mono">{project.number}</span>
+        <span className="work-glyph">
+          <Glyph size={18} />
+        </span>
+      </div>
+
+      <div className="work-main">
+        <div className="work-meta">
+          <span className="mono">{project.date}</span>
+          <span>{project.kicker}</span>
+        </div>
+        <h3>
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Open ${project.title} on GitHub`}
+          >
+            {project.title}
+            <ArrowUpRight size={18} aria-hidden="true" />
+          </a>
+        </h3>
+        <p className="work-desc">{project.description}</p>
+        <ul className="work-highlights">
+          {project.highlights.map((highlight) => (
+            <li key={highlight}>{highlight}</li>
+          ))}
+        </ul>
+        <div className="chips">
+          {project.stack.map((id) => (
+            <TechChip key={id} id={id} />
+          ))}
         </div>
       </div>
-      <div className="project-stack">
-        {stack.map((s) => (
-          <StackTag key={s}>{s}</StackTag>
+
+      <div className="work-side">
+        <span className="work-metric">{project.metric}</span>
+        <a
+          className="work-link"
+          href={project.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`${project.title} on GitHub`}
+        >
+          <Github size={14} aria-hidden="true" />
+          GitHub
+        </a>
+      </div>
+    </Reveal>
+  );
+}
+
+function MoreCard({ project, delay }) {
+  const Glyph = GLYPHS[project.glyph] ?? Sparkles;
+
+  return (
+    <Reveal as="article" className="mini-card" delay={delay}>
+      <div className="mini-top">
+        <span className="mono">{project.date}</span>
+        <span className="mini-glyph" aria-hidden="true">
+          <Glyph size={16} />
+        </span>
+      </div>
+      <h3>
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`Open ${project.title} on GitHub`}
+        >
+          {project.title}
+          <ArrowUpRight size={14} aria-hidden="true" />
+        </a>
+      </h3>
+      <p>{project.description}</p>
+      <div className="chips small">
+        {project.stack.map((id) => (
+          <TechChip key={id} id={id} />
         ))}
       </div>
-      <ul>
-        {bullets.map((b, i) => (
-          <li key={i}>{b}</li>
-        ))}
-      </ul>
-      <div className="metrics">
-        {metrics.map((m, i) => (
-          <Metric key={i} amber={m.amber}>
-            {m.text}
-          </Metric>
-        ))}
+      <div className="mini-foot">
+        <span>{project.note ?? ""}</span>
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`${project.title} GitHub repository`}
+        >
+          <Github size={14} aria-hidden="true" />
+          GitHub
+        </a>
       </div>
-    </div>
+    </Reveal>
   );
 }
 
 export default function Portfolio() {
-  const [navOpen, setNavOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const active = useActiveSection();
 
-  const navLinks = [
-    { href: "#about", label: "About" },
-    { href: "#skills", label: "Skills" },
-    { href: "#projects", label: "Projects" },
-    { href: "#certifications", label: "Certifications" },
-    { href: "#contact", label: "Contact" },
-  ];
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 861px)");
+    const closeOnDesktop = (event) => {
+      if (event.matches) setMenuOpen(false);
+    };
+
+    if (mq.addEventListener) mq.addEventListener("change", closeOnDesktop);
+    else mq.addListener(closeOnDesktop);
+
+    return () => {
+      if (mq.removeEventListener)
+        mq.removeEventListener("change", closeOnDesktop);
+      else mq.removeListener(closeOnDesktop);
+    };
+  }, []);
+
+  const featured = PROJECTS.filter((project) => project.featured);
+  const more = PROJECTS.filter((project) => !project.featured);
 
   return (
-    <div className="pf-root">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    <div className="site">
+      <a className="skip" href="#main">
+        Skip to content
+      </a>
 
-        .pf-root{
-          --bg:#0B1220; --surface:#121B2E; --surface-2:#182342; --border:#243252;
-          --text:#E7ECF5; --text-dim:#8FA1BD; --text-faint:#5B6B87;
-          --teal:#4FD8C4; --teal-dim:rgba(79,216,196,0.13);
-          --amber:#F2A94E; --amber-dim:rgba(242,169,78,0.13);
-          background:var(--bg); color:var(--text); font-family:'Inter',sans-serif;
-          line-height:1.6; -webkit-font-smoothing:antialiased; position:relative; overflow-x:hidden;
-          min-height:100vh;
-        }
-        .pf-root *{box-sizing:border-box;}
-        .pf-root a{color:inherit;text-decoration:none;}
-        .pf-root ::selection{background:var(--teal-dim);color:var(--teal);}
-        .mono{font-family:'JetBrains Mono',monospace;}
-        .display{font-family:'Space Grotesk',sans-serif;}
+      <header className="nav-shell">
+        <nav className="nav" aria-label="Primary">
+          <a
+            className="brand"
+            href="#top"
+            aria-label="Ayushi Kashyap, back to top"
+          >
+            <FlowerMark className="brand-mark" />
+            <span className="brand-name">
+              Ayushi <em>Kashyap</em>
+            </span>
+          </a>
 
-        .wrap{max-width:1080px;margin:0 auto;padding:0 28px;}
-        .pf-section{padding:96px 0;}
-        @media(max-width:640px){ .pf-section{padding:64px 0;} }
-
-        .grid-bg{
-          position:fixed;inset:0;z-index:0;pointer-events:none;
-          background-image:
-            linear-gradient(var(--border) 1px, transparent 1px),
-            linear-gradient(90deg, var(--border) 1px, transparent 1px);
-          background-size:64px 64px; opacity:0.35;
-          mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
-        }
-
-        header{ position:fixed;top:0;left:0;right:0;z-index:100;
-          background:rgba(11,18,32,0.82); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
-        nav{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;max-width:1080px;margin:0 auto;}
-        .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:0.02em;}
-        .logo span{color:var(--teal);}
-        .nav-links{display:flex;gap:32px;align-items:center;}
-        .nav-links a{font-size:0.88rem;color:var(--text-dim);transition:color .2s;}
-        .nav-links a:hover{color:var(--text);}
-        .nav-icons{display:flex;gap:16px;align-items:center;}
-        .nav-icons a{color:var(--text-dim);display:flex;transition:color .2s;}
-        .nav-icons a:hover{color:var(--teal);}
-        .burger{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px;}
-
-        @media(max-width:760px){
-          .nav-links{
-            position:fixed;top:60px;left:0;right:0;background:var(--surface);
-            border-bottom:1px solid var(--border);flex-direction:column;align-items:flex-start;
-            padding:20px 28px;gap:18px;transform:translateY(-130%);transition:transform .25s ease;
-          }
-          .nav-links.open{transform:translateY(0);}
-          .burger{display:block;}
-        }
-
-        .hero{padding-top:168px;padding-bottom:80px;position:relative;}
-        .eyebrow{font-size:0.78rem;letter-spacing:0.14em;color:var(--teal);display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;}
-        .eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
-        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,216,196,0.45);}70%{box-shadow:0 0 0 8px rgba(79,216,196,0);}100%{box-shadow:0 0 0 0 rgba(79,216,196,0);}}
-        h1.pf-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.6rem,7vw,4.6rem);line-height:1.02;letter-spacing:-0.02em;margin:0;}
-        .tagline{font-size:clamp(1.05rem,2.4vw,1.35rem);color:var(--text-dim);max-width:620px;margin-top:22px;font-weight:400;}
-        .tagline b{color:var(--text);font-weight:600;}
-
-        .cta-row{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;}
-        .btn{padding:12px 24px;border-radius:8px;font-size:0.92rem;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .2s;border:none;cursor:pointer;}
-        .btn-primary{background:var(--teal);color:#06231E;}
-        .btn-primary:hover{background:#68e5d3;transform:translateY(-1px);}
-        .btn-outline{border:1px solid var(--border);color:var(--text);background:transparent;}
-        .btn-outline:hover{border-color:var(--teal);color:var(--teal);}
-
-        .contact-icons{display:flex;gap:18px;margin-top:36px;}
-        .contact-icons a{width:40px;height:40px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);transition:all .2s;}
-        .contact-icons a:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-2px);}
-
-        .telemetry{margin-top:64px;border:1px solid var(--border);border-radius:12px;background:var(--surface);overflow:hidden;position:relative;}
-        .telemetry-head{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);font-size:0.72rem;color:var(--text-faint);letter-spacing:0.08em;}
-        .telemetry-dots{display:flex;gap:6px;}
-        .telemetry-dots span{width:7px;height:7px;border-radius:50%;background:var(--border);display:block;}
-        .telemetry-body{display:grid;grid-template-columns:repeat(4,1fr);}
-        @media(max-width:760px){ .telemetry-body{grid-template-columns:repeat(2,1fr);} }
-        .tstat{padding:22px 18px;border-right:1px solid var(--border);position:relative;overflow:hidden;}
-        .tstat:last-child{border-right:none;}
-        .tstat .num{font-size:1.5rem;font-weight:600;color:var(--text);}
-        .tstat .label{font-size:0.72rem;color:var(--text-faint);letter-spacing:0.05em;margin-top:4px;}
-        .scan{position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(79,216,196,0.08),transparent);animation:sweep 5s linear infinite;}
-        @keyframes sweep{0%{left:-40%;}100%{left:110%;}}
-        @media(prefers-reduced-motion:reduce){ .scan{animation:none;display:none;} .eyebrow::before{animation:none;} }
-
-        .sec-head{margin-bottom:44px;}
-        .sec-num{font-size:0.78rem;color:var(--teal);letter-spacing:0.1em;margin-bottom:10px;}
-        .sec-title{font-size:clamp(1.7rem,3.4vw,2.3rem);font-weight:600;}
-        .sec-sub{color:var(--text-dim);margin-top:10px;max-width:600px;font-size:0.98rem;}
-
-        .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:56px;align-items:start;}
-        @media(max-width:760px){.about-grid{grid-template-columns:1fr;gap:32px;}}
-        .about-text p{color:var(--text-dim);font-size:1.02rem;margin:0 0 16px;}
-        .about-text b{color:var(--text);}
-        .fact-list{display:flex;flex-direction:column;gap:0;}
-        .fact{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);}
-        .fact:first-child{border-top:1px solid var(--border);}
-        .fact .k{color:var(--text-faint);font-size:0.85rem;}
-        .fact .v{color:var(--teal);font-size:0.92rem;}
-
-        .skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
-        @media(max-width:640px){.skills-grid{grid-template-columns:1fr;}}
-        .skill-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;}
-        .skill-card h4{font-size:0.82rem;color:var(--text-faint);letter-spacing:0.08em;margin:0 0 16px;text-transform:uppercase;}
-        .tags{display:flex;flex-wrap:wrap;gap:8px;}
-        .tag{font-size:0.82rem;padding:6px 12px;border-radius:100px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);}
-
-        .project{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px;margin-bottom:22px;transition:border-color .2s;}
-        .project:hover{border-color:#324164;}
-        .project-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
-        .project-date{font-size:0.76rem;color:var(--text-faint);letter-spacing:0.05em;}
-        .project-title{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:10px;}
-        .project-title a{color:var(--text-dim);display:flex;transition:color .2s;}
-        .project-title a:hover{color:var(--teal);}
-        .project-stack{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px;}
-        .stack-tag{font-size:0.72rem;padding:4px 10px;border-radius:5px;background:var(--surface-2);color:var(--text-dim);border:1px solid var(--border);}
-        .project ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin:0 0 20px;padding:0;}
-        .project li{color:var(--text-dim);font-size:0.94rem;padding-left:18px;position:relative;}
-        .project li::before{content:'—';position:absolute;left:0;color:var(--text-faint);}
-        .metrics{display:flex;flex-wrap:wrap;gap:10px;}
-        .metric{font-size:0.78rem;font-weight:600;padding:8px 14px;border-radius:8px;background:var(--teal-dim);color:var(--teal);}
-        .metric.amber{background:var(--amber-dim);color:var(--amber);}
-
-        .card-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-        @media(max-width:760px){.card-row{grid-template-columns:1fr;}}
-        .info-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;}
-        .info-card .icon{color:var(--teal);margin-bottom:14px;}
-        .info-card h4{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;margin:0 0 6px;}
-        .info-card .sub{color:var(--text-dim);font-size:0.9rem;}
-        .info-card .meta{font-size:0.78rem;color:var(--text-faint);margin-top:14px;}
-
-        .contact-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:52px 40px;text-align:center;}
-        .contact-box h2{font-size:clamp(1.6rem,3.4vw,2.1rem);font-weight:600;margin:0 0 14px;}
-        .contact-box p{color:var(--text-dim);max-width:480px;margin:0 auto 32px;}
-        .contact-grid{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
-
-        .pf-footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--text-faint);font-size:0.82rem;position:relative;}
-      `}</style>
-
-      <div className="grid-bg" />
-
-      <header>
-        <nav>
-          <div className="logo">
-            AYUSHI<span>.</span>
-          </div>
-          <div className={"nav-links" + (navOpen ? " open" : "")}>
-            {navLinks.map((l) => (
-              <a key={l.href} href={l.href} onClick={() => setNavOpen(false)}>
-                {l.label}
+          <div className="nav-links" id="primary-nav" data-open={menuOpen}>
+            {NAV.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                onClick={() => setMenuOpen(false)}
+                aria-current={active === item.id ? "location" : undefined}
+              >
+                {item.label}
               </a>
             ))}
-            <div className="nav-icons">
-              <a href={GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub">
-                <Github size={18} />
-              </a>
-              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn">
-                <Linkedin size={18} />
-              </a>
-              <a href={`mailto:${EMAIL}`} aria-label="Email">
-                <Mail size={18} />
-              </a>
-            </div>
+            <a
+              className="nav-mobile-resume"
+              href={PROFILE.resume}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Résumé <ArrowUpRight size={14} />
+            </a>
           </div>
-          <button className="burger" aria-label="Menu" onClick={() => setNavOpen((v) => !v)}>
-            {navOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+
+          <div className="nav-actions">
+            <a
+              className="nav-resume"
+              href={PROFILE.resume}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Résumé <ArrowUpRight size={13} />
+            </a>
+            <button
+              className="burger"
+              type="button"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="primary-nav"
+              onClick={() => setMenuOpen((value) => !value)}
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </nav>
       </header>
 
-      <main className="wrap" style={{ position: "relative", zIndex: 1 }}>
-        <section className="hero">
-          <div className="eyebrow mono">AI/ML ENGINEER · BENGALURU, INDIA</div>
-          <h1 className="pf-name">Ayushi</h1>
-          <p className="tagline">
-            I design and ship applied ML systems — from <b>real-time anomaly detection</b> pipelines to{" "}
-            <b>multilingual generative-AI</b> assistants — turning research ideas into working, measurable software.
-          </p>
+      {menuOpen ? (
+        <button
+          className="nav-scrim"
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setMenuOpen(false)}
+        />
+      ) : null}
 
-          <div className="cta-row">
-            <a href="#projects" className="btn btn-primary">
-              View Projects <ArrowRight size={16} />
-            </a>
-            <a href="#contact" className="btn btn-outline">
-              Get in Touch
-            </a>
+      <main id="main">
+        <section className="hero" id="top">
+          <div className="wrap">
+            <div className="hero-grid">
+              <div className="hero-copy">
+                <div className="status">
+                  <span className="status-dot" />
+                  {PROFILE.availability}
+                </div>
+
+                <h1 className="hero-name">
+                  <span>Ayushi</span>
+                  <span className="hero-name-last">
+                    Kashyap
+                    <FlowerMark className="hero-flower" />
+                  </span>
+                </h1>
+
+                <p className="hero-lede">
+                  I build <strong>applied AI systems</strong> that make it out of
+                  the notebook — RAG pipelines, anomaly detection, and
+                  multilingual tools for the people who need them.
+                </p>
+
+                <div className="hero-actions">
+                  <a className="btn btn-primary" href="#work">
+                    Explore selected work <ArrowDown size={16} />
+                  </a>
+                  <a
+                    className="btn btn-ghost"
+                    href={PROFILE.resume}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Download résumé <ArrowUpRight size={16} />
+                  </a>
+                </div>
+
+                <SocialLinks />
+              </div>
+
+              <aside className="hero-card" aria-label="Latest build">
+                <div className="hero-card-head">
+                  <span className="mono">PORTFOLIO / 2026</span>
+                  <FlowerMark />
+                </div>
+
+                <div className="hero-orbit">
+                  <div className="hero-portrait">
+                    <img
+                      src="/ayushi-portrait.jpg"
+                      alt="Portrait of Ayushi Kashyap"
+                      width="156"
+                      height="156"
+                      decoding="async"
+                    />
+                  </div>
+                  <span className="orbit-label">AI · ML · RAG</span>
+                </div>
+
+                <div className="hero-card-body">
+                  <span className="mono">LATEST BUILD</span>
+                  <h2>Building grounded financial AI.</h2>
+                  <p>
+                    LedgerMind — a RAG + text-to-SQL agent with a citation on
+                    every answer.
+                  </p>
+                </div>
+
+                <div className="hero-card-foot">
+                  <span>
+                    <MapPin size={14} /> {PROFILE.location}
+                  </span>
+                  <span>
+                    <GraduationCap size={14} /> VIT Bhopal · 2027
+                  </span>
+                  <span>
+                    <Award size={14} /> 7 certifications · 8.7 CGPA
+                  </span>
+                </div>
+              </aside>
+            </div>
+
+            <dl className="hero-stats">
+              {STATS.map((stat) => (
+                <div className="stat" key={stat.label}>
+                  <dt>{stat.label}</dt>
+                  <dd>{stat.value}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
+        </section>
 
-          <div className="contact-icons">
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer" aria-label="GitHub">
-              <Github size={18} />
-            </a>
-            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" aria-label="LinkedIn">
-              <Linkedin size={18} />
-            </a>
-            <a href={`mailto:${EMAIL}`} aria-label="Email">
-              <Mail size={18} />
-            </a>
-            <a href={`tel:${PHONE_TEL}`} aria-label="Phone">
-              <Phone size={18} />
-            </a>
+        <div className="ticker" aria-hidden="true">
+          <div className="ticker-track">
+            {[0, 1].map((group) => (
+              <div className="ticker-group" key={group}>
+                {TICKER.map((item) => (
+                  <span className="ticker-item" key={`${group}-${item}`}>
+                    {item}
+                    <FlowerMark className="ticker-flower" />
+                  </span>
+                ))}
+              </div>
+            ))}
           </div>
+        </div>
 
-          <Reveal className="telemetry">
-            <div className="telemetry-head">
-              <span>flagship_run.log</span>
-              <div className="telemetry-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
+        <section className="section about" id="about">
+          <div className="wrap">
+            <Reveal>
+              <SectionHead
+                index="01"
+                label="Profile"
+                title={
+                  <>
+                    Applied AI,
+                    <br />
+                    <em>built end to end.</em>
+                  </>
+                }
+              />
+            </Reveal>
+
+            <div className="about-grid">
+              <Reveal className="about-copy" delay=".05s">
+                <p>
+                  I'm an <strong>AI/ML engineer</strong> and final-year B.Tech CS
+                  student at <strong>VIT Bhopal</strong>, specializing in AI &
+                  ML. I care about the whole pipeline: framing the problem,
+                  training and evaluating the model, and shipping the interface
+                  that makes it useful.
+                </p>
+                <p>
+                  My recent work is grounded LLM systems —{" "}
+                  <strong>RAG over legal and financial documents</strong>, safe
+                  text-to-SQL, and evaluation that keeps answers honest. Before
+                  that: behavioural anomaly detection, computer vision, and
+                  full-stack ML products.
+                </p>
+                <blockquote className="about-quote">
+                  “The number I can defend matters more than the demo.”
+                </blockquote>
+                <div className="about-links">
+                  <a
+                    className="text-link"
+                    href={PROFILE.github}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    GitHub <ArrowUpRight size={14} />
+                  </a>
+                  <a
+                    className="text-link"
+                    href={PROFILE.linkedin}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    LinkedIn <ArrowUpRight size={14} />
+                  </a>
+                  <a
+                    className="text-link"
+                    href={PROFILE.resume}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Résumé <ArrowUpRight size={14} />
+                  </a>
+                </div>
+              </Reveal>
+
+              <Reveal className="fact-card" delay=".12s">
+                <div className="fact-card-head">
+                  <span className="mono">AT A GLANCE</span>
+                  <FlowerMark />
+                </div>
+                <dl>
+                  {FACTS.map((fact) => (
+                    <div className="fact-row" key={fact.label}>
+                      <dt>{fact.label}</dt>
+                      <dd>{fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <a
+                  className="fact-resume"
+                  href={PROFILE.resume}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Read the full résumé <ArrowUpRight size={14} />
+                </a>
+              </Reveal>
             </div>
-            <div className="telemetry-body">
-              <TStat num="89%" label="PRECISION @ TOP-1%" delay="0s" />
-              <TStat num="18.6K+" label="SESSIONS SCORED" delay="1.2s" />
-              <TStat num="20K" label="SYNTHETIC / RUN" delay="2.4s" />
-              <TStat num="3" label="SHIPPED PROJECTS" delay="3.6s" />
-            </div>
-          </Reveal>
+          </div>
         </section>
 
-        <section id="about" className="pf-section">
-          <Reveal className="sec-head">
-            <div className="sec-num mono">01 · PROFILE</div>
-            <div className="sec-title display">About</div>
-          </Reveal>
-          <Reveal className="about-grid">
-            <div className="about-text">
-              <p>
-                I'm a <b>B.Tech Computer Science</b> student specializing in <b>AI & ML</b> at Vellore Institute of
-                Technology, Bhopal, graduating in 2027. I focus on building applied machine learning systems
-                end-to-end — architecting the pipeline, training and validating the models, and shipping the
-                interface around them.
+        <section className="section stack" id="stack">
+          <div className="wrap">
+            <Reveal>
+              <SectionHead
+                index="02"
+                label="Toolkit"
+                title={
+                  <>
+                    The stack,
+                    <br />
+                    <em>logo by logo.</em>
+                  </>
+                }
+                intro="One pipeline, every layer. These are the libraries and platforms I reach for when a model has to become a product."
+              />
+            </Reveal>
+
+            <div className="stack-list">
+              {SKILL_GROUPS.map((group, groupIndex) => (
+                <Reveal
+                  className="stack-row"
+                  key={group.title}
+                  delay={`${groupIndex * 0.04}s`}
+                >
+                  <div className="stack-label">
+                    <span className="mono">
+                      {String(groupIndex + 1).padStart(2, "0")}
+                    </span>
+                    <h3>{group.title}</h3>
+                  </div>
+                  <div className="stack-grid">
+                    {group.items.map((id) => {
+                      const tech = TECH[id];
+                      return (
+                        <div
+                          className="tech-tile"
+                          key={id}
+                          style={{
+                            "--brand": techBrand(id),
+                            "--icon-bg": techIconBackground(id),
+                          }}
+                          title={tech.label}
+                        >
+                          <span className="tech-icon">
+                            <TechIcon id={id} />
+                          </span>
+                          <span className="tech-name">{tech.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section work-band on-dark" id="work">
+          <div className="wrap">
+            <Reveal>
+              <SectionHead
+                index="03"
+                label="Selected work"
+                title={
+                  <>
+                    Six systems,
+                    <br />
+                    <em>shipped end to end.</em>
+                  </>
+                }
+                intro="Each one started with a real problem and ended with a working interface, a measured result, and a repository you can read."
+              />
+            </Reveal>
+
+            <div className="work-list">
+              {featured.map((project, index) => (
+                <FeaturedProject
+                  key={project.id}
+                  project={project}
+                  delay={`${index * 0.04}s`}
+                />
+              ))}
+            </div>
+
+            <div className="work-foot">
+              <span className="mono">MORE BUILDS BELOW</span>
+              <a className="work-link" href="#more">
+                See the archive <ArrowDown size={14} />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="section more" id="more">
+          <div className="wrap">
+            <Reveal>
+              <SectionHead
+                index="04"
+                label="Archive"
+                title={
+                  <>
+                    More from
+                    <br />
+                    <em>the build log.</em>
+                  </>
+                }
+                intro="Smaller builds, team projects, and the earlier versions of ideas I kept working on."
+              />
+            </Reveal>
+
+            <div className="more-grid">
+              {more.map((project, index) => (
+                <MoreCard
+                  key={project.id}
+                  project={project}
+                  delay={`${index * 0.04}s`}
+                />
+              ))}
+
+              <Reveal
+                as="a"
+                className="mini-card archive-card"
+                href={PROFILE.github}
+                target="_blank"
+                rel="noreferrer"
+                delay=".2s"
+              >
+                <div className="mini-top">
+                  <span className="mono">THE FULL ARCHIVE</span>
+                  <ArrowUpRight size={16} />
+                </div>
+                <h3>All 16 public repositories</h3>
+                <p>
+                  Coursework, experiments, and works in progress — the whole
+                  build log.
+                </p>
+                <div className="mini-foot">
+                  <span>github.com/ayushikashyap1207</span>
+                  <Github size={15} />
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="section credentials" id="credentials">
+          <div className="wrap">
+            <Reveal>
+              <SectionHead
+                index="05"
+                label="Credentials"
+                title={
+                  <>
+                    Certified,
+                    <br />
+                    <em>still curious.</em>
+                  </>
+                }
+                intro="Seven certifications and a degree in progress — the formal layer underneath the projects."
+              />
+            </Reveal>
+
+            <div className="credentials-grid">
+              <div className="cert-list">
+                {CERTS.map((cert, index) => (
+                  <Reveal
+                    className="cert-row"
+                    key={cert.title}
+                    delay={`${index * 0.05}s`}
+                  >
+                    <span className="cert-mark">
+                      <TechIcon id={cert.mark} />
+                    </span>
+                    <div>
+                      <h3>
+                        {cert.url ? (
+                          <a
+                            href={cert.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`View ${cert.title} certificate`}
+                          >
+                            {cert.title}
+                            <ArrowUpRight size={12} aria-hidden="true" />
+                          </a>
+                        ) : (
+                          cert.title
+                        )}
+                      </h3>
+                      <p>{cert.issuer}</p>
+                    </div>
+                    <span className="cert-date mono">{cert.date}</span>
+                  </Reveal>
+                ))}
+              </div>
+
+              <Reveal className="edu-card" delay=".1s">
+                <span className="mono">EDUCATION</span>
+                <div className="edu-cgpa">
+                  {EDUCATION.cgpa}
+                  <span>/10</span>
+                </div>
+                <h3>{EDUCATION.degree}</h3>
+                <p>
+                  {EDUCATION.specialization}
+                  <br />
+                  {EDUCATION.school}
+                </p>
+                <div className="edu-meta">
+                  <span>{EDUCATION.years}</span>
+                  <span>EXPECTED 2027</span>
+                </div>
+                <div className="edu-tags">
+                  {EDUCATION.coursework.map((course) => (
+                    <span key={course}>{course}</span>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="section contact-band on-dark" id="contact">
+          <div className="wrap contact-grid">
+            <Reveal>
+              <div className="section-kicker mono">
+                <span className="kicker-index">06</span>
+                <span>Contact</span>
+              </div>
+              <h2 className="contact-title">
+                Let's build something
+                <br />
+                <em>worth shipping.</em>
+              </h2>
+              <p className="contact-lede">
+                I'm looking for 2027 new-grad AI/ML roles where I can own a
+                system end to end — from the model and the eval to the interface
+                someone actually uses.
               </p>
-              <p>
-                My work spans <b>real-time anomaly detection</b> for cybersecurity, <b>multilingual generative AI</b>{" "}
-                for legal accessibility, and <b>full-stack ML applications</b> — with an emphasis on measurable
-                outcomes: precision, latency, and accuracy numbers I can defend, not just demos.
-              </p>
-            </div>
-            <div className="fact-list">
-              <div className="fact">
-                <span className="k">CGPA</span>
-                <span className="v mono">8.68 / 10</span>
+              <div className="contact-actions">
+                <a className="btn btn-sun" href={`mailto:${PROFILE.email}`}>
+                  <Mail size={16} /> Email me
+                </a>
+                <CopyEmail />
               </div>
-              <div className="fact">
-                <span className="k">Graduation</span>
-                <span className="v mono">Expected 2027</span>
-              </div>
-              <div className="fact">
-                <span className="k">Location</span>
-                <span className="v mono">Bengaluru, IN</span>
-              </div>
-              <div className="fact">
-                <span className="k">Certifications</span>
-                <span className="v mono">1</span>
-              </div>
-            </div>
-          </Reveal>
-        </section>
+            </Reveal>
 
-        <section id="skills" className="pf-section">
-          <Reveal className="sec-head">
-            <div className="sec-num mono">02 · STACK</div>
-            <div className="sec-title display">Tech Stack</div>
-            <div className="sec-sub">Tools and frameworks I use to take a model from notebook to production.</div>
-          </Reveal>
-          <Reveal className="skills-grid">
-            <div className="skill-card">
-              <h4>Generative AI &amp; NLP</h4>
-              <div className="tags">
-                <Tag>LLaMA 3.1</Tag>
-                <Tag>Prompt Engineering</Tag>
-                <Tag>RAG Pipelines</Tag>
-                <Tag>gTTS</Tag>
-                <Tag>Multilingual NLP</Tag>
-              </div>
-            </div>
-            <div className="skill-card">
-              <h4>Machine Learning</h4>
-              <div className="tags">
-                <Tag>Scikit-learn</Tag>
-                <Tag>Random Forest</Tag>
-                <Tag>KNN</Tag>
-                <Tag>Isolation Forest</Tag>
-                <Tag>LSTM Autoencoders</Tag>
-                <Tag>Ensemble Learning</Tag>
-              </div>
-            </div>
-            <div className="skill-card">
-              <h4>Data &amp; Infrastructure</h4>
-              <div className="tags">
-                <Tag>Pandas</Tag>
-                <Tag>NumPy</Tag>
-                <Tag>MySQL</Tag>
-                <Tag>PostgreSQL</Tag>
-                <Tag>Kafka</Tag>
-                <Tag>Redis</Tag>
-                <Tag>Git / GitHub</Tag>
-                <Tag>Gradio</Tag>
-              </div>
-            </div>
-            <div className="skill-card">
-              <h4>Languages</h4>
-              <div className="tags">
-                <Tag>Java</Tag>
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <section id="projects" className="pf-section">
-          <Reveal className="sec-head">
-            <div className="sec-num mono">03 · WORK</div>
-            <div className="sec-title display">Projects</div>
-            <div className="sec-sub">Three systems, three different problems — security, legal access, and agriculture.</div>
-          </Reveal>
-
-          <Reveal>
-            <Project
-              date="JULY 2026"
-              title="Behavioral Anomaly Detection for Cybersecurity"
-              url="https://tinyurl.com/mrax9es7"
-              stack={["Python", "PyTorch", "Scikit-learn", "Kafka", "Redis", "FastAPI", "PostgreSQL", "React"]}
-              bullets={[
-                "Architected a three-layer platform — batch ML pipeline, live dashboard, real-time streaming — modeling normal behavior across 3 entity types (users, service accounts, edge devices).",
-                "Generated and scored 20,000 synthetic sessions per run, with 8% cold-start entities and 2% injected attacks, to validate detection under realistic class imbalance.",
-                "Built a dual-detector engine (Isolation Forest for cold-start entities, LSTM Autoencoder over 5-session sliding windows) fused via percentile-rank normalization.",
-                "Trained a RandomForest classifier to categorize alerts into 6 attack types, with a z-score-based explainability module for plain-language analyst alerts.",
-                "Engineered a FastAPI + PostgreSQL/TimescaleDB backend, a React dashboard, and a Kafka + Redis streaming pipeline with per-entity state via the Okta API.",
-              ]}
-              metrics={[{ text: "89% precision @ top-1% alert budget" }, { text: "18,600+ sessions scored", amber: true }]}
-            />
-            <Project
-              date="MARCH 2026"
-              title="Nyaya Mitra — AI Legal Document Assistant"
-              url="https://tinyurl.com/prtwo2"
-              stack={["Python", "Groq API", "Gradio", "PyPDF2", "gTTS"]}
-              bullets={[
-                "Built a multilingual legal-document assistant using LLaMA 3.1 to parse and simplify FIRs and court notices for rural populations across 4+ regional languages.",
-                "Designed a structured extraction pipeline converting dense legal jargon into JSON-formatted, actionable insights.",
-                "Integrated text-to-speech support across 4+ regional languages, improving accessibility for semi-literate users.",
-              ]}
-              metrics={[{ text: "4+ regional languages" }]}
-            />
-            <Project
-              date="JANUARY 2025"
-              title="Crop Recommendation System — Full-Stack Application"
-              url="https://tinyurl.com/gprth3"
-              stack={["Python", "Scikit-learn", "Flask", "Node.js", "Express", "MongoDB", "OpenWeatherMap API"]}
-              bullets={[
-                "Designed a 3-tier full-stack application using Flask for ML model inference and Node.js/Express for API orchestration.",
-                "Modeled soil and meteorological parameters (NPK, pH, rainfall) for crop selection.",
-                "Optimized MongoDB queries and indexing, cutting data retrieval and response times.",
-                "Integrated OpenWeatherMap API to deliver real-time agricultural analytics through an interactive UI.",
-              ]}
-              metrics={[{ text: "90%+ prediction accuracy" }, { text: "40% faster queries", amber: true }]}
-            />
-          </Reveal>
-        </section>
-
-        <section id="certifications" className="pf-section">
-          <Reveal className="sec-head">
-            <div className="sec-num mono">04 · CREDENTIALS</div>
-            <div className="sec-title display">Certifications &amp; Education</div>
-          </Reveal>
-          <Reveal className="card-row">
-            <div className="info-card">
-              <div className="icon">
-                <Award size={24} />
-              </div>
-              <h4>Applied Machine Learning in Python</h4>
-              <div className="sub">University of Michigan</div>
-              <div className="meta mono">DEC 2025</div>
-            </div>
-            <div className="info-card">
-              <div className="icon">
-                <GraduationCap size={24} />
-              </div>
-              <h4>B.Tech, Computer Science</h4>
-              <div className="sub">Vellore Institute of Technology, Bhopal — AI &amp; ML Specialization</div>
-              <div className="meta mono">CGPA 8.68/10 · EXPECTED 2027</div>
-            </div>
-          </Reveal>
-        </section>
-
-        <section id="contact" className="pf-section">
-          <Reveal className="contact-box">
-            <h2 className="display">Let's build something.</h2>
-            <p>Open to AI/ML engineering roles and collaborations — reach out directly, or find me on GitHub and LinkedIn.</p>
-            <div className="contact-grid">
-              <a href={`mailto:${EMAIL}`} className="btn btn-primary">
-                <Mail size={16} /> {EMAIL}
+            <Reveal as="address" className="contact-card" delay=".1s">
+              <a className="contact-row" href={`mailto:${PROFILE.email}`}>
+                <Mail />
+                <span>
+                  <small>Email</small>
+                  <strong>{PROFILE.email}</strong>
+                </span>
               </a>
-              <a href={`tel:${PHONE_TEL}`} className="btn btn-outline">
-                <Phone size={16} /> {PHONE_DISPLAY}
+              <a className="contact-row" href={`tel:${PROFILE.phoneTel}`}>
+                <Phone />
+                <span>
+                  <small>Phone</small>
+                  <strong>{PROFILE.phoneDisplay}</strong>
+                </span>
               </a>
-              <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="btn btn-outline">
-                GitHub
+              <a
+                className="contact-row"
+                href={PROFILE.github}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Github />
+                <span>
+                  <small>GitHub</small>
+                  <strong>github.com/ayushikashyap1207</strong>
+                </span>
               </a>
-              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer" className="btn btn-outline">
-                LinkedIn
+              <a
+                className="contact-row"
+                href={PROFILE.linkedin}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Linkedin />
+                <span>
+                  <small>LinkedIn</small>
+                  <strong>linkedin.com/in/ayushi1207</strong>
+                </span>
               </a>
-            </div>
-          </Reveal>
+              <a
+                className="contact-row"
+                href={PROFILE.resume}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FileText />
+                <span>
+                  <small>Résumé</small>
+                  <strong>Download PDF</strong>
+                </span>
+              </a>
+            </Reveal>
+          </div>
         </section>
       </main>
 
-      <footer className="pf-footer">
-        <div className="wrap">Ayushi — AI/ML Engineer · Bengaluru, India</div>
+      <footer className="footer">
+        <div className="wrap footer-inner">
+          <a className="footer-brand" href="#top">
+            <FlowerMark />
+            <span>Ayushi Kashyap</span>
+          </a>
+          <span>AI/ML Engineer · Bengaluru, India</span>
+          <span>© 2026 · Built with React &amp; Vite</span>
+        </div>
       </footer>
     </div>
   );
