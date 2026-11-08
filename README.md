@@ -85,4 +85,4 @@ npm run build
 npm run preview
 ```
 
-`dist/` is a static bundle that can be deployed to Vercel, Netlify, GitHub Pages, or any static host. The canonical URL and social image currently point to `https://portfolio-ayushi-268a.vercel.app/`; update those in `index.html` and `public/robots.txt` / `public/sitemap.xml` if the domain changes.
+`dist/` is a static bundle that can be deployed to Vercel, Netlify, GitHub Pages, or any static host. The canonical URL and social image currently point to `https://portfolio-omega-dusky-mvlffisqcu.vercel.app/`; update those in `index.html` and `public/robots.txt` / `public/sitemap.xml` if the domain changes.

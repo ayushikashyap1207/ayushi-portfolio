@@ -8,7 +8,7 @@ export const PROFILE = {
   github: "https://github.com/ayushikashyap1207",
   linkedin: "https://www.linkedin.com/in/ayushi1207/",
   resume: "/Ayushi-Kashyap-Resume.pdf",
-  site: "https://portfolio-ayushi-268a.vercel.app/",
+  site: "https://portfolio-omega-dusky-mvlffisqcu.vercel.app/",
   availability: "Open to 2027 new-grad roles",
 };
 
