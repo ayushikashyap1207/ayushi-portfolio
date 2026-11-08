@@ -130,7 +130,7 @@ export function techIconBackground(id) {
   if (!icon?.hex) return "transparent";
 
   const brand = `#${icon.hex}`;
-  const cream = "#e7ecf5";
+  const cream = "#f2efff";
   const l1 = relativeLuminance(brand);
   const l2 = relativeLuminance(cream);
   const contrast = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);

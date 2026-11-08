@@ -596,9 +596,9 @@ export default function Portfolio() {
                 label="Profile"
                 title={
                   <>
-                    Applied AI,
+                    Problems first,
                     <br />
-                    <em>built end to end.</em>
+                    <em>models second.</em>
                   </>
                 }
               />
@@ -609,19 +609,23 @@ export default function Portfolio() {
                 <p>
                   I'm an <strong>AI/ML engineer</strong> and final-year B.Tech CS
                   student at <strong>VIT Bhopal</strong>, specializing in AI &
-                  ML. I care about the whole pipeline: framing the problem,
-                  training and evaluating the model, and shipping the interface
-                  that makes it useful.
+                  ML. My strongest skill is taking a problem that arrives vague —
+                  a messy dataset, an unwritten process, an idea that only lives
+                  in someone's head — and turning it into{" "}
+                  <strong>a clear question, a measurable target, and a working
+                  system</strong>.
                 </p>
                 <p>
-                  My recent work is grounded LLM systems —{" "}
-                  <strong>RAG over legal and financial documents</strong>, safe
-                  text-to-SQL, and evaluation that keeps answers honest. Before
-                  that: behavioural anomaly detection, computer vision, and
-                  full-stack ML products.
+                  That's a problem-solving habit more than a stack: break the
+                  ambiguity into testable pieces, design the evaluation before
+                  the model, debug from first principles when the numbers stop
+                  moving, and explain the trade-offs so the next person can act
+                  on them. I move comfortably across{" "}
+                  <strong>data, modelling, backend, and interface</strong> — and
+                  I pick up whatever the problem demands.
                 </p>
                 <blockquote className="about-quote">
-                  “The number I can defend matters more than the demo.”
+                  “First make the problem legible, then make the model useful.”
                 </blockquote>
                 <div className="about-links">
                   <a

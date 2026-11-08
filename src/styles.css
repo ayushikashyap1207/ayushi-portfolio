@@ -1,28 +1,28 @@
 /* =========================================================
    Ayushi — portfolio
-   Navy canvas · ice text · teal + amber accents
-   Palette source: deployed portfolio (Vercel)
+   Midnight canvas · moonlit text · iris + glacier accents
+   Palette: deep indigo, soft violet, ice cyan
    ========================================================= */
 
 :root {
-  --canvas: #0b1220;
-  --canvas-soft: #121b2e;
-  --accent: #4fd8c4;
-  --accent-soft: #f2a94e;
-  --ink: #121b2e;
-  --ink-2: #182342;
-  --ink-3: #0b1220;
-  --cream: #e7ecf5;
-  --cream-2: #e7ecf5;
-  --cream-dim: #8fa1bd;
-  --faint: #5b6b87;
-  --muted: #8fa1bd;
-  --border: #243252;
-  --teal-bright: #68e5d3;
-  --button-ink: #06231e;
-  --line: rgba(231, 236, 245, 0.16);
-  --line-strong: rgba(231, 236, 245, 0.28);
-  --line-light: rgba(231, 236, 245, 0.16);
+  --canvas: #08070f;
+  --canvas-soft: #100d1c;
+  --accent: #a78bfa;
+  --accent-soft: #67e8f9;
+  --ink: #120f21;
+  --ink-2: #1a1630;
+  --ink-3: #08070f;
+  --cream: #f2efff;
+  --cream-2: #f2efff;
+  --cream-dim: #b8b0d0;
+  --faint: #6a6185;
+  --muted: #b8b0d0;
+  --border: #2b2542;
+  --teal-bright: #c4b5fd;
+  --button-ink: #0f0b1e;
+  --line: rgba(242, 239, 255, 0.16);
+  --line-strong: rgba(242, 239, 255, 0.28);
+  --line-light: rgba(242, 239, 255, 0.16);
   --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
   --sans: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -54,7 +54,7 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: radial-gradient(rgba(231, 236, 245, 0.08) 0.55px, transparent 0.55px);
+  background-image: radial-gradient(rgba(242, 239, 255, 0.08) 0.55px, transparent 0.55px);
   background-size: 22px 22px;
   opacity: 0.3;
   -webkit-mask-image: linear-gradient(to bottom, black, transparent 72%);
@@ -217,7 +217,7 @@ svg {
   border-radius: 999px;
   background: var(--ink);
   color: var(--cream);
-  box-shadow: 0 22px 44px -26px rgba(11, 18, 32, 0.9);
+  box-shadow: 0 22px 44px -26px rgba(8, 7, 15, 0.9);
 }
 
 .brand {
@@ -331,7 +331,7 @@ svg {
   inset: 0;
   z-index: 55;
   border: 0;
-  background: rgba(11, 18, 32, 0.6);
+  background: rgba(8, 7, 15, 0.6);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
   cursor: pointer;
@@ -356,7 +356,7 @@ svg {
     border: 1px solid var(--line-light);
     border-radius: 18px;
     background: var(--ink);
-    box-shadow: 0 30px 50px -30px rgba(11, 18, 32, 0.65);
+    box-shadow: 0 30px 50px -30px rgba(8, 7, 15, 0.65);
     visibility: hidden;
     opacity: 0;
     transform: translateY(-8px);
@@ -446,9 +446,9 @@ svg {
   align-items: center;
   gap: 10px;
   padding: 7px 14px;
-  border: 1px solid rgba(79, 216, 196, 0.3);
+  border: 1px solid rgba(167, 139, 250, 0.3);
   border-radius: 999px;
-  background: rgba(79, 216, 196, 0.1);
+  background: rgba(167, 139, 250, 0.1);
   color: var(--accent);
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -461,7 +461,7 @@ svg {
   height: 7px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 4px rgba(79, 216, 196, 0.14);
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.14);
   flex: none;
 }
 
@@ -553,7 +553,7 @@ svg {
 
 .btn-ghost:hover {
   border-color: var(--accent);
-  background: rgba(79, 216, 196, 0.1);
+  background: rgba(167, 139, 250, 0.1);
   color: var(--accent);
 }
 
@@ -607,7 +607,7 @@ svg {
   border-radius: 28px;
   background: var(--ink);
   color: var(--cream);
-  box-shadow: 0 34px 64px -42px rgba(11, 18, 32, 0.95);
+  box-shadow: 0 34px 64px -42px rgba(8, 7, 15, 0.95);
   animation: rise 0.9s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
@@ -616,7 +616,7 @@ svg {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 72% 18%, rgba(79, 216, 196, 0.16), transparent 56%);
+  background: radial-gradient(circle at 72% 18%, rgba(167, 139, 250, 0.16), transparent 56%);
 }
 
 .hero-card-head,
@@ -661,7 +661,7 @@ svg {
   left: 50%;
   width: 210px;
   height: 210px;
-  border: 1px solid rgba(79, 216, 196, 0.3);
+  border: 1px solid rgba(167, 139, 250, 0.3);
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
@@ -686,7 +686,7 @@ svg {
   overflow: hidden;
   border: 1px solid var(--line-strong);
   border-radius: 50%;
-  box-shadow: 0 0 0 8px rgba(231, 236, 245, 0.04);
+  box-shadow: 0 0 0 8px rgba(242, 239, 255, 0.04);
 }
 
 .hero-portrait img {
@@ -703,8 +703,8 @@ svg {
   inset: 0;
   border-radius: 50%;
   background:
-    linear-gradient(145deg, rgba(79, 216, 196, 0.32), transparent 55%),
-    radial-gradient(circle at 50% 30%, transparent 40%, rgba(11, 18, 32, 0.32) 100%);
+    linear-gradient(145deg, rgba(167, 139, 250, 0.32), transparent 55%),
+    radial-gradient(circle at 50% 30%, transparent 40%, rgba(8, 7, 15, 0.32) 100%);
   mix-blend-mode: color;
   pointer-events: none;
 }
@@ -809,7 +809,7 @@ svg {
   border-top: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
   background: var(--ink);
-  color: var(--accent);
+  color: var(--accent-soft);
 }
 
 .ticker-track {
@@ -907,7 +907,7 @@ svg {
   border-radius: 20px;
   background: var(--cream);
   color: var(--ink);
-  box-shadow: 0 20px 44px -34px rgba(11, 18, 32, 0.55);
+  box-shadow: 0 20px 44px -34px rgba(8, 7, 15, 0.55);
 }
 
 .fact-card-head {
@@ -939,7 +939,7 @@ svg {
   justify-content: space-between;
   gap: 18px;
   padding: 13px 0;
-  border-bottom: 1px solid rgba(11, 18, 32, 0.16);
+  border-bottom: 1px solid rgba(8, 7, 15, 0.16);
 }
 
 .fact-row:last-child {
@@ -1050,7 +1050,7 @@ svg {
   border-color: var(--brand, var(--ink));
   background: var(--cream);
   color: var(--ink);
-  box-shadow: 0 18px 30px -24px rgba(11, 18, 32, 0.9);
+  box-shadow: 0 18px 30px -24px rgba(8, 7, 15, 0.9);
   transform: translateY(-2px);
 }
 
@@ -1103,7 +1103,7 @@ svg {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: radial-gradient(rgba(231, 236, 245, 0.16) 0.6px, transparent 0.6px);
+  background-image: radial-gradient(rgba(242, 239, 255, 0.16) 0.6px, transparent 0.6px);
   background-size: 24px 24px;
   opacity: 0.3;
   -webkit-mask-image: linear-gradient(to bottom, black, transparent 88%);
@@ -1149,7 +1149,7 @@ svg {
 }
 
 .work-item:hover {
-  background: rgba(79, 216, 196, 0.045);
+  background: rgba(167, 139, 250, 0.045);
 }
 
 .work-index {
@@ -1169,7 +1169,7 @@ svg {
   place-items: center;
   width: 42px;
   height: 42px;
-  border: 1px solid rgba(242, 169, 78, 0.45);
+  border: 1px solid rgba(103, 232, 249, 0.45);
   border-radius: 50%;
   color: var(--accent-soft);
 }
@@ -1320,7 +1320,7 @@ svg {
   padding: 5px 10px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(231, 236, 245, 0.07);
+  background: rgba(242, 239, 255, 0.07);
   color: var(--cream-dim);
   font-size: 0.64rem;
   font-weight: 600;
@@ -1365,7 +1365,7 @@ svg {
 
 .mini-card:hover {
   border-color: var(--ink);
-  box-shadow: 0 24px 44px -32px rgba(11, 18, 32, 0.7);
+  box-shadow: 0 24px 44px -32px rgba(8, 7, 15, 0.7);
   transform: translateY(-3px);
 }
 
@@ -1419,7 +1419,7 @@ svg {
 
 .mini-card .chip {
   border-color: var(--border);
-  background: rgba(11, 18, 32, 0.05);
+  background: rgba(8, 7, 15, 0.05);
   color: var(--ink);
 }
 
@@ -1580,7 +1580,7 @@ svg {
   bottom: -46px;
   width: 170px;
   height: 170px;
-  border: 1px solid rgba(242, 169, 78, 0.28);
+  border: 1px solid rgba(103, 232, 249, 0.28);
   border-radius: 50%;
 }
 
@@ -1666,7 +1666,7 @@ svg {
   right: -160px;
   width: 540px;
   height: 540px;
-  border: 1px solid rgba(79, 216, 196, 0.24);
+  border: 1px solid rgba(167, 139, 250, 0.24);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1678,7 +1678,7 @@ svg {
   bottom: -260px;
   width: 460px;
   height: 460px;
-  border: 1px dashed rgba(242, 169, 78, 0.18);
+  border: 1px dashed rgba(103, 232, 249, 0.18);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -1743,7 +1743,7 @@ svg {
   padding: 4px 24px;
   border: 1px solid var(--line-light);
   border-radius: 20px;
-  background: rgba(231, 236, 245, 0.05);
+  background: rgba(242, 239, 255, 0.05);
   font-style: normal;
 }
 

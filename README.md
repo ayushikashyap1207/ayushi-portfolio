@@ -1,6 +1,6 @@
 # Ayushi Kashyap — Portfolio
 
-A React + Vite portfolio for an AI/ML engineer. Editorial type, a navy / ice / teal / amber palette, a credentials section sourced from LinkedIn, and a project showcase sourced from GitHub.
+A React + Vite portfolio for an AI/ML engineer. Editorial type, a midnight / moonlit / iris / glacier palette, a credentials section sourced from LinkedIn, and a project showcase sourced from GitHub.
 
 ## Run it locally
 
@@ -42,14 +42,14 @@ ayushi-portfolio/
 ## Theme
 
 ```css
---canvas: #0b1220;      /* navy page */
---ink: #121b2e;         /* raised surfaces and dark bands */
---cream: #e7ecf5;       /* ice text and light cards */
---accent: #4fd8c4;      /* teal */
---accent-soft: #f2a94e; /* amber */
+--canvas: #08070f;      /* midnight page */
+--ink: #120f21;         /* raised surfaces and dark bands */
+--cream: #f2efff;       /* moonlit text and light cards */
+--accent: #a78bfa;      /* iris violet */
+--accent-soft: #67e8f9; /* glacier cyan */
 ```
 
-The type pairing is Instrument Serif (display), Manrope (body), and JetBrains Mono (labels). The palette is the one used by the deployed portfolio: `#0B1220`, `#121B2E`, `#182342`, `#243252`, `#E7ECF5`, `#8FA1BD`, `#5B6B87`, `#4FD8C4`, `#F2A94E`.
+The type pairing is Instrument Serif (display), Manrope (body), and JetBrains Mono (labels). The supporting palette: `#08070F`, `#120F21`, `#1A1630`, `#2B2542`, `#F2EFFF`, `#B8B0D0`, `#6A6185`, `#A78BFA`, `#67E8F9`.
 
 ## Projects shown
 
@@ -73,7 +73,7 @@ LinkedIn's own page auth-walls automated requests; these details were collected 
 
 ## Assets
 
-- **Portrait:** replace `public/ayushi-portrait.jpg` with a professional headshot when you have one. The circular crop and cool teal duotone are applied in CSS.
+- **Portrait:** replace `public/ayushi-portrait.jpg` with a professional headshot when you have one. The circular crop and cool violet duotone are applied in CSS.
 - **Résumé:** replace `public/Ayushi-Kashyap-Resume.pdf`; the nav and hero download links point to it.
 - **Social card:** `public/og.png` is already generated at 1200×630. Regenerate it if the name, role, or headline changes.
 - **Logos:** brand marks come from [Simple Icons](https://simpleicons.org/). Brands without a mark (OpenAI, Groq, ChromaDB, Llama, Tesseract, gTTS) use a monogram tile.
