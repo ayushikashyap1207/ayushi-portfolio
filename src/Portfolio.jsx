@@ -520,7 +520,7 @@ export default function Portfolio() {
                 <SocialLinks />
               </div>
 
-              <aside className="hero-card" aria-label="Latest build">
+              <aside className="hero-card" aria-label="About Ayushi">
                 <div className="hero-card-head">
                   <span className="mono">PORTFOLIO / 2026</span>
                   <FlowerMark />
@@ -540,11 +540,12 @@ export default function Portfolio() {
                 </div>
 
                 <div className="hero-card-body">
-                  <span className="mono">LATEST BUILD</span>
-                  <h2>Building grounded financial AI.</h2>
+                  <span className="mono">A LITTLE ABOUT ME</span>
+                  <h2>Hi — I'm Ayushi.</h2>
                   <p>
-                    LedgerMind — a RAG + text-to-SQL agent with a citation on
-                    every answer.
+                    Final-year AI & ML student at VIT Bhopal, based in
+                    Bengaluru. Curious by default, and happiest when a messy
+                    idea turns into something real.
                   </p>
                 </div>
 
@@ -593,12 +594,12 @@ export default function Portfolio() {
             <Reveal>
               <SectionHead
                 index="01"
-                label="Profile"
+                label="About me"
                 title={
                   <>
-                    Problems first,
+                    A little more
                     <br />
-                    <em>models second.</em>
+                    <em>than code.</em>
                   </>
                 }
               />
@@ -607,25 +608,26 @@ export default function Portfolio() {
             <div className="about-grid">
               <Reveal className="about-copy" delay=".05s">
                 <p>
-                  I'm an <strong>AI/ML engineer</strong> and final-year B.Tech CS
-                  student at <strong>VIT Bhopal</strong>, specializing in AI &
-                  ML. My strongest skill is taking a problem that arrives vague —
-                  a messy dataset, an unwritten process, an idea that only lives
-                  in someone's head — and turning it into{" "}
-                  <strong>a clear question, a measurable target, and a working
-                  system</strong>.
+                  I'm Ayushi — a final-year B.Tech CS student at{" "}
+                  <strong>VIT Bhopal</strong>, specializing in AI & ML, and
+                  currently based in <strong>Bengaluru</strong>. I got into
+                  this field because I loved the feeling of making a machine do
+                  something it couldn't do yesterday; I've been chasing that
+                  feeling ever since.
                 </p>
                 <p>
-                  That's a problem-solving habit more than a stack: break the
-                  ambiguity into testable pieces, design the evaluation before
-                  the model, debug from first principles when the numbers stop
-                  moving, and explain the trade-offs so the next person can act
-                  on them. I move comfortably across{" "}
-                  <strong>data, modelling, backend, and interface</strong> — and
-                  I pick up whatever the problem demands.
+                  I'm curious, steady, and easy to work with — or at least
+                  that's what my teammates tell me. I ask a lot of questions, I
+                  like understanding the <strong>why before the how</strong>,
+                  and I'd rather build something small that genuinely helps
+                  someone than something impressive that never leaves the
+                  notebook. Outside of code, I'm usually reading, sketching
+                  interfaces, or talking someone's ear off about an idea I just
+                  had.
                 </p>
                 <blockquote className="about-quote">
-                  “First make the problem legible, then make the model useful.”
+                  “Good work starts with listening — to people, to data, and to
+                  the problem.”
                 </blockquote>
                 <div className="about-links">
                   <a
