@@ -17,6 +17,7 @@ import {
   Menu,
   Phone,
   Presentation,
+  RotateCw,
   Scale,
   ScanLine,
   ShieldAlert,
@@ -265,59 +266,357 @@ function CopyEmail() {
   );
 }
 
-function FeaturedProject({ project, delay }) {
+function CoverPattern({ variant }) {
+  switch (variant) {
+    case 0:
+      return (
+        <g>
+          {[38, 64, 50, 86, 70, 104].map((height, index) => (
+            <rect
+              key={height}
+              x={54 + index * 30}
+              y={188 - height}
+              width="10"
+              height={height}
+              rx="3"
+              fill="url(#cover-bars)"
+              opacity={0.8 - index * 0.07}
+            />
+          ))}
+          <path
+            d="M40 158C86 132 119 162 160 119s78-35 112-55 48 2 72 10"
+            stroke="#67e8f9"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            opacity="0.8"
+          />
+          <circle cx="344" cy="54" r="4" fill="#67e8f9" />
+          <circle cx="344" cy="54" r="10" stroke="#67e8f9" strokeOpacity="0.3" />
+        </g>
+      );
+    case 1:
+      return (
+        <g>
+          <g transform="translate(58 34) rotate(-5)" opacity="0.75">
+            <rect
+              width="112"
+              height="152"
+              rx="6"
+              fill="#f2efff"
+              fillOpacity="0.04"
+              stroke="#a78bfa"
+              strokeOpacity="0.35"
+            />
+            {[0, 1, 2, 3, 4, 5].map((line) => (
+              <rect
+                key={line}
+                x="14"
+                y={22 + line * 19}
+                width={line % 3 === 1 ? 56 : 84}
+                height="3"
+                rx="1.5"
+                fill="#f2efff"
+                fillOpacity="0.18"
+              />
+            ))}
+            <rect x="10" y="100" width="92" height="2" fill="#67e8f9" fillOpacity="0.8" />
+          </g>
+          {Array.from({ length: 15 }).map((_, index) => {
+            const height = 10 + Math.abs(Math.sin(index * 1.9)) * 46;
+            return (
+              <rect
+                key={index}
+                x={256 + index * 8}
+                y={126 - height / 2}
+                width="3"
+                height={height}
+                rx="1.5"
+                fill="#67e8f9"
+                opacity="0.5"
+              />
+            );
+          })}
+          <circle cx="320" cy="52" r="4" fill="#67e8f9" />
+          <circle cx="320" cy="52" r="11" stroke="#67e8f9" strokeOpacity="0.28" />
+        </g>
+      );
+    case 2:
+      return (
+        <g>
+          {[54, 78, 102].map((radius, index) => (
+            <circle
+              key={radius}
+              cx="200"
+              cy="115"
+              r={radius}
+              stroke="#67e8f9"
+              strokeOpacity={0.28 - index * 0.06}
+              strokeDasharray="2 9"
+            />
+          ))}
+          {Array.from({ length: 27 }).map((_, index) => {
+            const height = 8 + Math.abs(Math.sin(index * 1.7)) * 36;
+            return (
+              <rect
+                key={index}
+                x={118 + index * 6.4}
+                y={158 - height / 2}
+                width="2.4"
+                height={height}
+                rx="1.2"
+                fill="#a78bfa"
+                opacity="0.55"
+              />
+            );
+          })}
+          <circle cx="200" cy="115" r="3.5" fill="#67e8f9" />
+        </g>
+      );
+    case 3: {
+      const nodes = [
+        [62, 58], [108, 112], [152, 56], [196, 92], [238, 42], [276, 116],
+        [316, 72], [344, 148], [88, 172], [178, 164], [258, 172], [320, 190],
+      ];
+      const links = [
+        [0, 1], [1, 2], [1, 3], [3, 4], [3, 5], [4, 6], [5, 6], [5, 8],
+        [1, 8], [8, 9], [9, 10], [5, 10], [6, 10], [10, 11], [5, 11],
+        [2, 3], [4, 5],
+      ];
+
+      return (
+        <g>
+          {links.map(([from, to]) => (
+            <line
+              key={`${from}-${to}`}
+              x1={nodes[from][0]}
+              y1={nodes[from][1]}
+              x2={nodes[to][0]}
+              y2={nodes[to][1]}
+              stroke="#a78bfa"
+              strokeOpacity="0.22"
+            />
+          ))}
+          {nodes.map(([x, y], index) => (
+            <circle
+              key={`${x}-${y}`}
+              cx={x}
+              cy={y}
+              r={index === 6 ? 4.5 : 2.2}
+              fill={index === 6 ? "#67e8f9" : "#a78bfa"}
+              opacity={index === 6 ? 1 : 0.7}
+            />
+          ))}
+          <circle cx="316" cy="72" r="14" stroke="#67e8f9" strokeOpacity="0.5" strokeDasharray="2 4" />
+          <circle cx="316" cy="72" r="26" stroke="#67e8f9" strokeOpacity="0.18" />
+        </g>
+      );
+    }
+    case 4: {
+      const joints = {
+        head: [200, 52], neck: [200, 74],
+        lsh: [172, 88], lel: [150, 118], lwr: [132, 148],
+        rsh: [228, 88], rel: [250, 118], rwr: [268, 148],
+        hip: [200, 132], lkn: [176, 172], rkn: [224, 172],
+        lan: [164, 208], ran: [236, 208],
+      };
+      const bones = [
+        ["head", "neck"], ["neck", "lsh"], ["neck", "rsh"],
+        ["lsh", "lel"], ["lel", "lwr"], ["rsh", "rel"], ["rel", "rwr"],
+        ["neck", "hip"], ["hip", "lkn"], ["lkn", "lan"],
+        ["hip", "rkn"], ["rkn", "ran"],
+      ];
+
+      return (
+        <g>
+          {bones.map(([from, to]) => (
+            <line
+              key={`${from}-${to}`}
+              x1={joints[from][0]}
+              y1={joints[from][1]}
+              x2={joints[to][0]}
+              y2={joints[to][1]}
+              stroke="#67e8f9"
+              strokeOpacity="0.35"
+              strokeWidth="1.2"
+            />
+          ))}
+          {Object.entries(joints).map(([joint, [x, y]]) => (
+            <circle
+              key={joint}
+              cx={x}
+              cy={y}
+              r={joint === "head" ? 7 : 3}
+              fill="#a78bfa"
+              fillOpacity={joint === "head" ? 0.5 : 0.9}
+              stroke="#f2efff"
+              strokeOpacity="0.4"
+            />
+          ))}
+          <path
+            d="M176 172a18 18 0 0 1 24 0"
+            stroke="#67e8f9"
+            strokeOpacity="0.4"
+            strokeDasharray="2 3"
+          />
+          <path
+            d="M236 208c26-8 48-22 66-42"
+            stroke="#67e8f9"
+            strokeOpacity="0.25"
+            strokeDasharray="2 6"
+          />
+        </g>
+      );
+    }
+    case 5:
+      return (
+        <g>
+          <g stroke="#67e8f9" fill="none">
+            <ellipse cx="202" cy="118" rx="58" ry="36" strokeOpacity="0.45" />
+            <ellipse cx="208" cy="116" rx="88" ry="56" strokeOpacity="0.3" />
+            <ellipse cx="214" cy="120" rx="120" ry="76" strokeOpacity="0.16" />
+          </g>
+          <path
+            d="M124 94c18-10 28 14 48 4s26-20 48-12 26 18 46 8"
+            stroke="#a78bfa"
+            strokeOpacity="0.4"
+            strokeWidth="1.2"
+          />
+          <path
+            d="M142 138c16-6 24 10 42 2s28-14 44-6 24 12 38 6"
+            stroke="#a78bfa"
+            strokeOpacity="0.25"
+            strokeWidth="1.2"
+          />
+          <g stroke="#67e8f9" strokeOpacity="0.55">
+            <path d="M112 76H92V56M292 76h20V56M112 160H92v20M292 160h20v20" />
+          </g>
+        </g>
+      );
+    default:
+      return null;
+  }
+}
+
+function ProjectCover({ project }) {
   const Glyph = GLYPHS[project.glyph] ?? Sparkles;
+  const variant = Number(project.number) - 1;
 
   return (
-    <Reveal as="article" className="work-item" delay={delay}>
-      <div className="work-index" aria-hidden="true">
-        <span className="mono">{project.number}</span>
-        <span className="work-glyph">
-          <Glyph size={18} />
+    <div className="work-card-cover" aria-hidden="true">
+      <svg
+        className="cover-pattern"
+        viewBox="0 0 400 230"
+        fill="none"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        {variant === 0 ? (
+          <defs>
+            <linearGradient id="cover-bars" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.06" />
+              <stop offset="100%" stopColor="#67e8f9" stopOpacity="0.85" />
+            </linearGradient>
+          </defs>
+        ) : null}
+        <CoverPattern variant={variant} />
+      </svg>
+
+      <span className="cover-reticle">
+        <span className="cover-glyph">
+          <Glyph size={48} strokeWidth={1.1} />
         </span>
-      </div>
+        <span className="cover-dot" />
+      </span>
+    </div>
+  );
+}
 
-      <div className="work-main">
-        <div className="work-meta">
-          <span className="mono">{project.date}</span>
-          <span>{project.kicker}</span>
-        </div>
-        <h3>
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`Open ${project.title} on GitHub`}
-          >
-            {project.title}
-            <ArrowUpRight size={18} aria-hidden="true" />
-          </a>
-        </h3>
-        <p className="work-desc">{project.description}</p>
-        <ul className="work-highlights">
-          {project.highlights.map((highlight) => (
-            <li key={highlight}>{highlight}</li>
-          ))}
-        </ul>
-        <div className="chips">
-          {project.stack.map((id) => (
-            <TechChip key={id} id={id} />
-          ))}
-        </div>
-      </div>
+function FeaturedProject({ project, delay }) {
+  const [flipped, setFlipped] = useState(false);
 
-      <div className="work-side">
-        <span className="work-metric">{project.metric}</span>
-        <a
-          className="work-link"
-          href={project.url}
-          target="_blank"
-          rel="noreferrer"
-          aria-label={`${project.title} on GitHub`}
+  return (
+    <Reveal
+      as="article"
+      className={`work-card ${flipped ? "is-flipped" : ""}`}
+      delay={delay}
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
+      onFocus={() => setFlipped(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFlipped(false);
+        }
+      }}
+    >
+      <div className="work-card-inner">
+        <div className="work-card-face work-card-front">
+          <ProjectCover project={project} />
+
+          <div className="work-card-top">
+            <span className="mono work-card-index">{project.number}</span>
+            <span className="mono work-card-index">{project.date}</span>
+          </div>
+
+          <div className="work-card-body">
+            <span className="work-kicker">{project.kicker}</span>
+            <h3>{project.title}</h3>
+          </div>
+
+          <div className="work-card-foot">
+            <span className="work-metric">{project.metric}</span>
+            <button
+              className="work-card-toggle"
+              type="button"
+              onClick={() => setFlipped(true)}
+            >
+              View details <RotateCw size={12} aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+
+        <div
+          className="work-card-face work-card-back"
+          aria-hidden={flipped ? "false" : "true"}
         >
-          <Github size={14} aria-hidden="true" />
-          GitHub
-        </a>
+          <div className="work-card-top">
+            <span className="mono">{project.number}</span>
+            <span className="mono">{project.date}</span>
+          </div>
+
+          <h3>{project.title}</h3>
+          <p className="work-card-desc">{project.description}</p>
+
+          <span className="work-stack-label mono">Tech stack</span>
+          <div className="chips small">
+            {project.stack.map((id) => (
+              <TechChip key={id} id={id} />
+            ))}
+          </div>
+
+          <div className="work-card-foot">
+            <a
+              className="work-link"
+              href={project.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`${project.title} on GitHub`}
+              tabIndex={flipped ? 0 : -1}
+            >
+              <Github size={14} aria-hidden="true" />
+              GitHub
+            </a>
+            <button
+              className="work-card-back-btn"
+              type="button"
+              onClick={(event) => {
+                setFlipped(false);
+                event.currentTarget.blur();
+              }}
+              tabIndex={flipped ? 0 : -1}
+            >
+              Back
+            </button>
+          </div>
+        </div>
       </div>
     </Reveal>
   );
@@ -753,11 +1052,11 @@ export default function Portfolio() {
                     <em>shipped end to end.</em>
                   </>
                 }
-                intro="Each one started with a real problem and ended with a working interface, a measured result, and a repository you can read."
+                intro="Each one started with a real problem and ended with a working interface and a measured result. Hover a card to flip it."
               />
             </Reveal>
 
-            <div className="work-list">
+            <div className="work-grid">
               {featured.map((project, index) => (
                 <FeaturedProject
                   key={project.id}
